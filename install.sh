@@ -50,9 +50,17 @@ fi
 green "    terminal-notifier.app: $SRC_APP"
 
 # Python Pillow（合成图像用）
+# 系统 Python 在 macOS 14+ 走 PEP 668，禁止直接 pip install。
+# 这里在临时 venv 里装一份，install 跑完随 $WORK_DIR 一起清掉，不污染用户 Python。
+PYTHON_BIN=python3
 if ! python3 -c "import PIL" 2>/dev/null; then
-    yellow "    安装 Pillow..."
-    python3 -m pip install --user --quiet Pillow
+    yellow "    系统 Python 没有 Pillow，创建临时 venv..."
+    VENV_DIR="$WORK_DIR/venv"
+    python3 -m venv "$VENV_DIR"
+    "$VENV_DIR/bin/pip" install --quiet --upgrade pip >/dev/null 2>&1 || true
+    "$VENV_DIR/bin/pip" install --quiet Pillow
+    PYTHON_BIN="$VENV_DIR/bin/python"
+    green "    venv 就绪: $VENV_DIR"
 fi
 
 cyan "==> 1/6 读取 poses.txt"
@@ -81,7 +89,7 @@ cyan "==> 3/6 合成 PNG（奶白底，nearest-neighbor 放大）"
 PNG_DIR="$WORK_DIR/pngs"
 mkdir -p "$PNG_DIR"
 for pose in "${POSES[@]}"; do
-    python3 "$REPO_DIR/lib/compose_icon.py" \
+    "$PYTHON_BIN" "$REPO_DIR/lib/compose_icon.py" \
         "$GIF_DIR/clawd-${pose}.gif" \
         "$PNG_DIR/clawd-${pose}.png"
 done
