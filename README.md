@@ -27,7 +27,7 @@ Terminal.app / Alacritty 都行）。
 需要 macOS + Homebrew。
 
 ```bash
-git clone https://github.com/<your-username>/clawd-notifier.git
+git clone https://github.com/ZeoXel/clawd-notifier.git
 cd clawd-notifier
 ./install.sh
 ```
