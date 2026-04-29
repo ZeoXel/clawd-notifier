@@ -47,7 +47,7 @@ def main():
     ap.add_argument("--bg", default="245,237,220",
                     help="背景色 R,G,B 或 R,G,B,A (默认奶白)")
     ap.add_argument("--pad-ratio", type=float, default=0.12,
-                    help="四周留白占画布比例 (默认 0.12 → 12%)")
+                    help="四周留白占画布比例 (默认 0.12 → 12%%)")
     ap.add_argument("--canvas", type=int, default=1024)
     args = ap.parse_args()
 
