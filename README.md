@@ -2,7 +2,9 @@
 
 让 macOS 通知弹窗显示 **Clawd**（Claude Code 的像素小螃蟹），每次随机一个姿势。
 
-> 演示视频占位（安装完成后会一起补上）
+<video src="docs/demo.mp4" controls width="840" muted playsinline></video>
+
+> 视频不渲染请点 [`docs/demo.mp4`](docs/demo.mp4) 直接看。
 
 最初是为了给 Claude Code 的任务完成钩子加点表情，但底层是
 [`terminal-notifier`](https://github.com/julienXX/terminal-notifier) 的 macOS bundle 包装——
