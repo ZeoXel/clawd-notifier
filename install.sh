@@ -127,6 +127,27 @@ green "    完成"
 echo
 green "✓ 安装完成"
 echo
+cyan "==> 首次授权（一次性）"
+echo "    macOS 通知权限按 bundle 授权——${#POSES[@]} 个 Clawd pose = ${#POSES[@]} 次「允许」。"
+echo "    现在给每个 bundle 各发一发预热通知，请在弹窗出现时连续点击「允许」"
+echo "    把这一波集中处理掉。授权过后未来不会再问。"
+echo
+if [ -t 0 ]; then
+    read -p "    按 Enter 开始（Ctrl+C 跳过，留到第一次自然触发时再处理）..." _ || true
+    for pose in "${POSES[@]}"; do
+        "$APPS_DIR/ClaudeNotifier-${pose}.app/Contents/MacOS/terminal-notifier" \
+            -title "Clawd Notifier" \
+            -subtitle "首次授权" \
+            -message "$pose" \
+            >/dev/null 2>&1 &
+        sleep 1
+    done
+    wait
+    green "    预热完成。错过的弹窗：系统设置 → 通知 → 找 'Claude Code' 条目逐个开启。"
+else
+    yellow "    非交互式 shell，跳过预热。首次实际通知时会逐个弹授权框。"
+fi
+echo
 cyan "测试一下："
 echo "    ~/bin/claude_notify.sh -title 'Claude Code' -subtitle 'test' -message '随机姿势'"
 echo
