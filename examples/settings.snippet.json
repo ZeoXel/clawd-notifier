@@ -1,0 +1,34 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "KEY=$(echo \"$PWD\" | shasum -a 1 | cut -c1-12); START=$(cat /tmp/cc-start-$KEY 2>/dev/null || echo 0); START=${START:-0}; DUR=$(( $(date +%s) - START )); [ \"$DUR\" -lt 10 ] && exit 0; \"$HOME/bin/claude_notify.sh\" -title \"Claude Code\" -subtitle \"$(basename \"$PWD\")\" -message \"任务完成\" -sound Glass >/dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/bin/claude_notify.sh\" -title \"Claude Code\" -subtitle \"$(basename \"$PWD\")\" -message \"需要你确认\" -sound Tink >/dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "KEY=$(echo \"$PWD\" | shasum -a 1 | cut -c1-12); date +%s > /tmp/cc-start-$KEY 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

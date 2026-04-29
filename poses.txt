@@ -1,0 +1,15 @@
+# 默认轮换池——每行一个 pose 名（对应 clawd-on-desk 的 GIF 文件名）。
+# 注释掉某行（开头加 #）就会跳过该姿势。
+# 想增加新 pose？只要在 clawd-on-desk 仓库找到对应 clawd-XXX.gif 即可。
+
+idle
+thinking
+typing
+happy
+notification
+building
+juggling
+conducting
+carrying
+sleeping
+sweeping
