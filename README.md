@@ -1,16 +1,23 @@
 # clawd-notifier
 
-让 macOS 通知里的 Claude Code 弹窗显示 **Clawd**（Claude Code 的像素小螃蟹），
-每次随机一个姿势。
+让 macOS 通知弹窗显示 **Clawd**（Claude Code 的像素小螃蟹），每次随机一个姿势。
 
 > 演示视频占位（安装完成后会一起补上）
+
+最初是为了给 Claude Code 的任务完成钩子加点表情，但底层是
+[`terminal-notifier`](https://github.com/julienXX/terminal-notifier) 的 macOS bundle 包装——
+**任何调用 terminal-notifier 的程序都能用，与终端无关**（Ghostty / iTerm2 / kitty /
+Terminal.app / Alacritty 都行）。
 
 ## 它做什么
 
 - 把每个 Clawd 姿势独立打包成一个 `.app` bundle（macOS 通知图标在 bundle
   级别缓存，不能在单个 app 内热切换 icns）
-- 运行时 wrapper `claude_notify.sh` 从池子里随机抽一个调用 `terminal-notifier`
-- 给 Claude Code 的 `Stop` / `Notification` hook 用
+- 运行时 wrapper `claude_notify.sh` 从池子里随机抽一个调用 `terminal-notifier`，
+  参数原样透传
+- 默认面向 Claude Code 的 `Stop` / `Notification` hook，但 wrapper 接受任意
+  terminal-notifier 参数——也能给 cron、构建脚本、其他 CLI 工具用（见
+  [Beyond Claude Code](#beyond-claude-code)）
 
 效果：Claude 通知你"任务完成"或"需要你确认"时，弹窗左侧的图标每次都不一样
 ——idle、thinking、typing、happy、building、juggling、sleeping……11 个姿势。
@@ -53,6 +60,31 @@ wrapper 在 `~/bin/`。每台机器各自跑一次 `./install.sh` 即可。
 如果你的 `~/.claude/settings.json` 走 iCloud / chezmoi / stow，那确实要同步——
 但 wrapper 和 bundle 路径在不同机器是一致的（都是 `$HOME/bin/...` 和
 `$HOME/Applications/...`），无需特殊处理。
+
+## Beyond Claude Code
+
+wrapper 是普通的 `terminal-notifier` 入口，参数原样透传，所以任何场景都能用。
+几个例子：
+
+```bash
+# 长跑脚本完成提醒
+./build.sh && ~/bin/claude_notify.sh -title "Build" -message "done" -sound Glass
+
+# cron / launchd 定时任务
+0 18 * * * /path/to/job.sh && ~/bin/claude_notify.sh -message "日报已生成"
+
+# 其他 AI CLI（codex / cursor-cli / aider / 自定义 agent）
+codex run task && ~/bin/claude_notify.sh -title "codex" -message "完成"
+
+# git hook（pre-push 跑一遍测试通知一下）
+npm test && ~/bin/claude_notify.sh -title "$(basename $PWD)" -message "tests passed"
+
+# tmux / 远程 SSH 通知
+ssh server 'long-running-job.sh' && ~/bin/claude_notify.sh -message "远程任务完成"
+```
+
+只要 `~/Applications/ClaudeNotifier-*.app` bundle 存在，每次都会随机换一个 Clawd
+图标——不限调用方，也不限终端。
 
 ## 卸载
 
